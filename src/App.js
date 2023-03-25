@@ -28,6 +28,8 @@ function App() {
         setCity(location.toUpperCase());
         setBackgroundImage(`../assets/${results.weather[0].main}.gif`)
         setLocation('');
+        event.target.city.blur();
+
 
       })
       .catch(error => {
@@ -37,6 +39,7 @@ function App() {
         setLocation('');
         setCity('LOCATION NOT FOUND!');
         setBackgroundImage(`../assets/Error${randomGif}.gif`)
+        event.target.city.blur();
       });
     console.log(data)
 
@@ -69,7 +72,10 @@ function App() {
               value={location}
               placeholder='enter location'
               name='city' />
-            <input className='submit-button' type='submit' />
+            <input
+              className='submit-button'
+              type='submit'
+            />
           </form>
         </div>
 
