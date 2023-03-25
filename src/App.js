@@ -26,7 +26,7 @@ function App() {
       .then(results => {
         setData(results);
         setCity(location.toUpperCase());
-        setBackgroundImage(`../assets/${results.weather[0].main}.gif`)
+        setBackgroundImage(`../assets/${results.weather[0].icon === '50d' ? '50d' : results.weather[0].main}.gif`)
         setLocation('');
         event.target.city.blur();
 
