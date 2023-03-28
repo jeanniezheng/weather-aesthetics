@@ -47,7 +47,7 @@ function App() {
       }
       const forecastResults = await forecastResponse.json();
       console.log(forecastResults);
-      setForecast(forecastResults);
+      setForecast(forecastResults.list);
     } catch (error) {
       console.error(error.message);
       let randomGif = Math.floor(Math.random() * 3) + 1;
