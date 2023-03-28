@@ -11,8 +11,10 @@ function App() {
   const [forecast, setForecast] = useState({})
   // const currDate = new Date().toLocaleDateString();
   const currTime = new Date().toLocaleTimeString();
+  console.log("new date" + new Date())
+  //Tue Mar 28 2023 17:20:32 
+
   //create state for an array of an array 
-  const [forecastWeather, setForecastWeather] = useState([])
 
 
   useEffect(() => {
@@ -81,8 +83,10 @@ function App() {
     const year = date.getFullYear();
     const month = date.getMonth() + 1; // Note: months are 0-indexed, so add 1
     const day = date.getDate();
+    const weekday = date.toLocaleString('en-US', { weekday: 'long' });
     // console.log(`${year}-${month}-${day}`);
-    return `${month}${day}`
+    // return `${year}-${month}-${day}`
+    return weekday
   }
   // console.log(convertUnixTimestamp(forecast[0]))
   let unix = forecast && forecast.length > 0 ? forecast[0].dt : console.log('Date time not available')
@@ -95,40 +99,35 @@ function App() {
   }
   // console.log(consoleTimeStamp(forecast))
 
-  let generateForecastWeather = (forecast) => {
-    //check each forecast item.dt 
-    //if item.dt === current item.dt, create variable to store: forecast[].main.temp_min, forecast[].main.temp_max
-    //if next item.dt is not equal to the current dt, get the average min and max and set it to the state as such { dt: [min, max], dt: [min, max]}
-    let minMaxStorage = {}
-    let currentDateTime = convertUnixTimestamp(unix)
-    let temp_min = forecast[0]?.main?.temp_min;
-    let temp_max = forecast[0]?.main?.temp_max;
-    let count = 1
+  const generateForecastWeather = (forecast) => {
+    let minMaxStorage = {};
+    let currentDateTime = convertUnixTimestamp(forecast[0]?.dt);
+    let temp_min = forecast[0]?.main?.temp ?? 0;
+    let temp_max = forecast[0]?.main?.temp ?? 0;
+    let count = 1;
 
     for (let i = 1; i < forecast.length; i++) {
-      let unix = forecast && forecast.length > 0 ? forecast[i].dt : console.log('Date time not available')
+      let unix = forecast[i]?.dt ?? console.log('Date time not available');
       if (convertUnixTimestamp(unix) === currentDateTime) {
-        // console.log('bingo' + convertUnixTimestamp(unix) + currentDateTime)
-        temp_min += forecast[i]?.main?.temp_min;
-        temp_max += forecast[i]?.main?.temp_max;
-        count++
-        console.log('count' + count)
-        console.log('temp_min' + temp_min)
-      } else {
-        // console.log('next please' + convertUnixTimestamp(unix) + currentDateTime)
-        minMaxStorage[currentDateTime] = [convertToFahrenheitt(temp_min / count), convertToFahrenheitt(temp_max / count)]
-        console.log('object' + minMaxStorage)
-        temp_min = forecast[i]?.main?.temp_min || 0;
-        temp_max = forecast[i]?.main?.temp_max || 0;
-        count = 1
-        currentDateTime = convertUnixTimestamp(unix)
+        let temp = forecast[i]?.main?.temp
+        if (temp > temp_max) {
+          temp_max = temp
+        } else {
+          temp_min = temp
+        }
       }
-
-
+      else {
+        minMaxStorage[currentDateTime] = [convertToFahrenheitt(temp_min), convertToFahrenheitt(temp_max),];
+        temp_min = forecast[i]?.main?.temp ?? 0;
+        temp_max = forecast[i]?.main?.temp ?? 0;
+        count = 1;
+        currentDateTime = convertUnixTimestamp(unix);
+      }
     }
-    console.log(minMaxStorage)
-    return minMaxStorage
-  }
+    //final min max values are outside the for loop to avoid any missing data
+    // minMaxStorage[currentDateTime] = [convertToFahrenheitt(temp), convertToFahrenheitt(temp),];
+    return minMaxStorage;
+  };
 
   console.log(generateForecastWeather(forecast))
 
@@ -161,15 +160,22 @@ function App() {
           <h1>{city} | {currTime}</h1>
           <div className='temp'>
             {data.main && (convertToFahrenheit(data.main.temp))}
-            {/* {forecast && forecast.map((item) => (
-              <div key={item.dt}>
-                <p>{item.dt_txt}</p>
-                <p>{item.main.temp}</p>
-              </div>
-            ))} */}
+            { }
             <h2>{data.main && data.weather[0].description}</h2>
           </div>
         </div>
+        {/*  Object.entries is used to convert the object returned from generateForecastWeather into an array of key-value pairs. The map function is then used to loop over each item in the array and render a div with the date, minimum temperature, and maximum temperature for each item. The key prop is set to the date to help React efficiently update the component when necessary. */}
+
+        <div>
+          {Object.entries(generateForecastWeather(forecast)).map(([date, [min, max]]) => (
+            <div key={date}>
+              <p>{date}</p>
+              {/* <p>Min: {min}&deg;F</p>
+              <p>Max: {max}&deg;F</p> */}
+            </div>
+          ))}
+        </div>
+
       </div>
 
     </div >
