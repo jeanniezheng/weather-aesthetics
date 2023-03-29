@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './index.css'
-// import gif from './assets/cloudy2.gif';
 
 function App() {
   const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
@@ -9,17 +8,9 @@ function App() {
   const [city, setCity] = useState("Today's Weather")
   const [backgroundImage, setBackgroundImage] = useState('../assets/choose.gif')
   const [forecast, setForecast] = useState({})
-  // const currDate = new Date().toLocaleDateString();
   const currTime = new Date().toLocaleTimeString();
   console.log("new date" + new Date())
   //Tue Mar 28 2023 17:20:32 
-
-  //create state for an array of an array 
-
-
-  useEffect(() => {
-    console.log(forecast);
-  }, [forecast]);
 
   const inputLocation = async (event) => {
     event.preventDefault();
@@ -43,7 +34,7 @@ function App() {
       event.target.city.blur();
 
       const forecastResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/forecast?lat=${results.coord.lat}&lon=${results.coord.lon}&appid=8c0b474f6453fd3a3342808b8c1166c5`
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${results.coord.lat}&lon=${results.coord.lon}&appid=${apiKey}`
       );
       if (!forecastResponse.ok) {
         throw new Error("Error fetching forecast data");
@@ -56,6 +47,7 @@ function App() {
       let randomGif = Math.floor(Math.random() * 3) + 1;
       setData({});
       setLocation("");
+      setForecast({})
       setCity("LOCATION NOT FOUND!");
       setBackgroundImage(`../assets/Error${randomGif}.gif`);
       event.target.city.blur();
@@ -69,11 +61,6 @@ function App() {
 
   let convertToFahrenheit = (k) => {
     let fahrenheit = Math.floor((k - 273.15) * 1.8 + 32);
-    return <h1> {fahrenheit}&deg;</h1>
-  }
-
-  let convertToFahrenheitt = (k) => {
-    let fahrenheit = Math.floor((k - 273.15) * 1.8 + 32);
     return fahrenheit
   }
 
@@ -83,7 +70,7 @@ function App() {
     const year = date.getFullYear();
     const month = date.getMonth() + 1; // Note: months are 0-indexed, so add 1
     const day = date.getDate();
-    const weekday = date.toLocaleString('en-US', { weekday: 'long' });
+    const weekday = date.toLocaleString('en-US', { weekday: 'short' });
     // console.log(`${year}-${month}-${day}`);
     // return `${year}-${month}-${day}`
     return weekday
@@ -112,12 +99,12 @@ function App() {
         let temp = forecast[i]?.main?.temp
         if (temp > temp_max) {
           temp_max = temp
-        } else {
+        } else if (temp < temp_min) {
           temp_min = temp
         }
       }
       else {
-        minMaxStorage[currentDateTime] = [convertToFahrenheitt(temp_min), convertToFahrenheitt(temp_max),];
+        minMaxStorage[currentDateTime] = [convertToFahrenheit(temp_min), convertToFahrenheit(temp_max),];
         temp_min = forecast[i]?.main?.temp ?? 0;
         temp_max = forecast[i]?.main?.temp ?? 0;
         count = 1;
@@ -125,7 +112,7 @@ function App() {
       }
     }
     //final min max values are outside the for loop to avoid any missing data
-    // minMaxStorage[currentDateTime] = [convertToFahrenheitt(temp), convertToFahrenheitt(temp),];
+    // minMaxStorage[currentDateTime] = [convertToFahrenheit(temp), convertToFahrenheit(temp),];
     return minMaxStorage;
   };
 
@@ -159,19 +146,21 @@ function App() {
         <div className='main-info'>
           <h1>{city} | {currTime}</h1>
           <div className='temp'>
-            {data.main && (convertToFahrenheit(data.main.temp))}
-            { }
+            {/* {data.main && <h1>(convertToFahrenheit(data.main.temp))</h1>} */}
+            {data.main && <h1>{(convertToFahrenheit(data.main.temp))}&deg;</h1>}
+
             <h2>{data.main && data.weather[0].description}</h2>
           </div>
         </div>
         {/*  Object.entries is used to convert the object returned from generateForecastWeather into an array of key-value pairs. The map function is then used to loop over each item in the array and render a div with the date, minimum temperature, and maximum temperature for each item. The key prop is set to the date to help React efficiently update the component when necessary. */}
 
-        <div>
+        {/* create a component for each day, each click on the card will change the background and card information */}
+        <div className='forecast-container'>
           {Object.entries(generateForecastWeather(forecast)).map(([date, [min, max]]) => (
-            <div key={date}>
+            <div className='forecast' key={date}>
               <p>{date}</p>
-              {/* <p>Min: {min}&deg;F</p>
-              <p>Max: {max}&deg;F</p> */}
+              <p>{min}&deg;F</p>
+              <p>{max}&deg;F</p>
             </div>
           ))}
         </div>

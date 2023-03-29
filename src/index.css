@@ -64,3 +64,17 @@ body {
   width: 70px;
   color: black;
 }
+
+.forecast-container {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: rgba(71, 79, 75, 0.5);
+}
+
+.forecast {
+  padding: 20px;
+
+}
