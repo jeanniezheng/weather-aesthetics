@@ -12,6 +12,7 @@ function App() {
   console.log("new date" + new Date())
   //Tue Mar 28 2023 17:20:32 
 
+  //function is to fecth from api and set state for city, location, backgroundImage and data
   const inputLocation = async (event) => {
     event.preventDefault();
     let url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}`;
@@ -33,6 +34,7 @@ function App() {
       setLocation("");
       event.target.city.blur();
 
+      //fetch from forecast endpoint to forecast 5 da weather 
       const forecastResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?lat=${results.coord.lat}&lon=${results.coord.lon}&appid=${apiKey}`
       );
@@ -64,6 +66,7 @@ function App() {
     return fahrenheit
   }
 
+  //convert Unix Time to weekday 
   let convertUnixTimestamp = (unixTimestamp) => {
     // const unixTimestamp = 1680048000;
     const date = new Date(unixTimestamp * 1000);
@@ -84,8 +87,8 @@ function App() {
       console.log(forecast[i].dt)
     }
   }
-  // console.log(consoleTimeStamp(forecast))
 
+  //Function is to get highs and lows forecast of the week 
   const generateForecastWeather = (forecast) => {
     let minMaxStorage = {};
     let currentDateTime = convertUnixTimestamp(forecast[0]?.dt);
