@@ -1,13 +1,14 @@
+/* Import the Lekton font from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Lekton&display=swap');
 
+/* Apply Lekton font to the entire body and set the background and text colors */
 body {
   font-family: Lekton;
-  /* background-color: rgb(99, 78, 53);
-  color: aliceblue; */
   background-color: rgb(196, 185, 173);
   color: aliceblue;
 }
 
+/* Set the container to position absolute and cover the entire screen */
 .container {
   position: absolute;
   top: 0;
@@ -19,6 +20,7 @@ body {
   background-position: center;
 }
 
+/* Set the weather information to position absolute, centered on the screen */
 .weather-information {
   position: absolute;
   top: 50%;
@@ -26,32 +28,20 @@ body {
   transform: translate(-50%, -50%);
 }
 
+/* Set the background color and padding for the main information section */
 .main-info {
-  /* background-color: rgba(74, 83, 79, 0.5); */
   background-color: rgba(71, 79, 75, 0.5);
-  /* background-color: rgba(242, 242, 242, 0.273); */
   padding: 1px 15px;
 }
 
+/* Set the search container to flex, center its contents, and style its input and submit button */
 .search {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.search input {
-  font-family: Lekton;
-  border-radius: 10px;
-  background-color: #f5f5f5;
-  opacity: 0.9;
-  padding: 10px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  border: none;
-  outline: none;
-  width: 200px;
-}
-
+.search input,
 .search .submit-button {
   font-family: Lekton;
   border-radius: 10px;
@@ -61,10 +51,19 @@ body {
   margin-bottom: 10px;
   border: none;
   outline: none;
+}
+
+.search input {
+  margin-right: 10px;
+  width: 200px;
+}
+
+.search .submit-button {
   width: 70px;
   color: black;
 }
 
+/* Set the style for the forecast container and forecast items */
 .forecast-container {
   margin-top: 10px;
   display: flex;
@@ -76,5 +75,4 @@ body {
 
 .forecast {
   padding: 20px;
-
 }
