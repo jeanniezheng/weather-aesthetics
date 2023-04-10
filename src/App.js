@@ -1,29 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import './index.css'
+import './index.css';
 
 function App() {
+  // Set the API key for OpenWeatherMap using an environment variable
   const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
-  const [data, setData] = useState({})
-  const [location, setLocation] = useState('')
-  const [city, setCity] = useState("Today's Weather")
-  const [backgroundImage, setBackgroundImage] = useState('../assets/choose.gif')
-  const [forecast, setForecast] = useState({})
-  const currTime = new Date().toLocaleTimeString();
-  console.log("new date" + new Date())
-  //Tue Mar 28 2023 17:20:32 
 
-  //function is to fecth from api and set state for city, location, backgroundImage and data
+  // Set the initial state for the weather data, location, city, background image, and forecast
+  const [data, setData] = useState({});
+  const [location, setLocation] = useState('');
+  const [city, setCity] = useState("Today's Weather");
+  const [backgroundImage, setBackgroundImage] = useState('../assets/choose.gif');
+  const [forecast, setForecast] = useState({});
+
+  // Get the current time and log it to the console
+  const currTime = new Date().toLocaleTimeString();
+  console.log("new date" + new Date());
+
+  // This function fetches weather data from the OpenWeatherMap API and sets the state for the city, location, background image, and data
   const inputLocation = async (event) => {
+    // Prevent the default form submission behavior
     event.preventDefault();
+
+    // Construct the URL for the API call using the location and API key
     let url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}`;
+
     try {
+      // Call the API and get the response
       const response = await fetch(url);
+
+      // If the response is not OK (i.e., an error occurred), throw an error
       if (!response.ok) {
         throw new Error("City not found");
       }
-      // console.log(response);
+
+      // Parse the response as JSON and set the state for the weather data
       const results = await response.json();
       setData(results);
+
+      // Set the state for the city and background image based on the weather data
       setCity(location.toUpperCase());
       setBackgroundImage(
         `../assets/${results.weather[0].icon === "50d"
@@ -31,20 +45,26 @@ function App() {
           : results.weather[0].main
         }.gif`
       );
+
+      // Reset the state for the location and blur the input field
       setLocation("");
       event.target.city.blur();
 
-      //fetch from forecast endpoint to forecast 5 da weather 
+      // Fetch the 5-day weather forecast for the given location and API key
       const forecastResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?lat=${results.coord.lat}&lon=${results.coord.lon}&appid=${apiKey}`
       );
+
+      // If the forecast response is not OK, throw an error
       if (!forecastResponse.ok) {
         throw new Error("Error fetching forecast data");
       }
+
+      // Parse the forecast response as JSON and set the state for the forecast data
       const forecastResults = await forecastResponse.json();
-      // console.log(forecastResults);
       setForecast(forecastResults.list);
     } catch (error) {
+      // Log any errors to the console and set the state accordingly
       console.error(error.message);
       let randomGif = Math.floor(Math.random() * 3) + 1;
       setData({});
@@ -54,17 +74,18 @@ function App() {
       setBackgroundImage(`../assets/Error${randomGif}.gif`);
       event.target.city.blur();
     }
-    // console.log(data);
   };
 
-  let handleChange = (e) => {
-    setLocation(e.target.value)
-  }
+  // Handle changes to the location input field
+  const handleChange = (e) => {
+    setLocation(e.target.value);
+  };
 
-  let convertToFahrenheit = (k) => {
+  // Convert a temperature from Kelvin to Fahrenheit
+  const convertToFahrenheit = (k) => {
     let fahrenheit = Math.floor((k - 273.15) * 1.8 + 32);
-    return fahrenheit
-  }
+    return fahrenheit;
+  };
 
   //convert Unix Time to weekday 
   let convertUnixTimestamp = (unixTimestamp) => {
